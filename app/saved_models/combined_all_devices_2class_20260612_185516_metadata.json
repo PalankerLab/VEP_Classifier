@@ -1,0 +1,45 @@
+{
+  "training_date": "20260612_185516",
+  "n_classes": 2,
+  "classes": [
+    "BC_Only",
+    "BC_and_RGC"
+  ],
+  "label_decoder": {
+    "0": "BC_Only",
+    "1": "BC_and_RGC"
+  },
+  "hyperparameters": {
+    "learning_rate": 0.005,
+    "regularization": "l2",
+    "l2_lambda": 0.0001,
+    "dropout_rate": 0.2,
+    "patience": 20,
+    "random_state": 42
+  },
+  "device": "COMBINED_ALL",
+  "n_samples": 324,
+  "class_counts": {
+    "BC_Only": 213,
+    "BC_and_RGC": 111
+  },
+  "training_params": {
+    "epochs": 30,
+    "batch_size": 8
+  },
+  "preprocessing": {
+    "devices": [
+      "PRIMA_LE_DA",
+      "PRIMA_RCS_DA",
+      "MP20_LE_DA",
+      "MP20_RCS_LA",
+      "RB20_RCS_LA"
+    ],
+    "tmax": 320,
+    "normalize": true,
+    "SNR_filtering": true,
+    "dwt_downsampling": true,
+    "artifact_removal": false,
+    "dwt_level": 4
+  }
+}

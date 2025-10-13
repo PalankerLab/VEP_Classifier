@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vep-classifier"
+version = "0.1.0"
+description = "Machine-learning pipeline for classifying visually evoked potentials (VEPs)."
+requires-python = ">=3.9"
+dynamic = ["dependencies"]
+
+[tool.setuptools]
+# Source-layout-less project: the package folders live at the repo root.
+packages = ["core", "classifiers", "experiments", "app"]
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }

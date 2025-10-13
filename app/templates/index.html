@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VEP Classifier - PRIMA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .info-box {
+            background: #f8f9ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+        
+        .info-box strong {
+            color: #667eea;
+        }
+        
+        .drop-zone {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 60px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9ff;
+            margin-bottom: 20px;
+        }
+        
+        .drop-zone:hover {
+            background: #f0f2ff;
+            border-color: #764ba2;
+        }
+        
+        .drop-zone.drag-over {
+            background: #e8ebff;
+            border-color: #764ba2;
+            transform: scale(1.02);
+        }
+        
+        .drop-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .drop-text {
+            font-size: 18px;
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .drop-subtext {
+            font-size: 14px;
+            color: #999;
+            margin-top: 8px;
+        }
+        
+        #fileInput {
+            display: none;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .results {
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .prediction-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .prediction-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        
+        .prediction-value {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .confidence-bar {
+            background: rgba(255, 255, 255, 0.3);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .confidence-fill {
+            background: white;
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .metric-box {
+            background: #f8f9ff;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .metric-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .probabilities {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .prob-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .prob-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .prob-label {
+            color: #666;
+        }
+        
+        .prob-value {
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .plot-container {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .plot-container img {
+            width: 100%;
+            display: block;
+        }
+        
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .btn-reset {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+        
+        .btn-reset:hover {
+            background: #764ba2;
+        }
+        
+        .file-info {
+            background: #f0f2ff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .file-info strong {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 VEP Classifier</h1>
+        <p class="subtitle">AI-powered Visual Evoked Potential Classification for PRIMA</p>
+        
+        <div class="info-box">
+            <strong>Model Info:</strong> Trained on {{ model_info.n_samples }} PRIMA samples | 
+            Classes: {{ model_info.classes | join(', ') | replace('_', ' ') }}
+        </div>
+        
+        <div id="uploadSection">
+            <div class="drop-zone" id="dropZone">
+                <div class="drop-icon">📁</div>
+                <div class="drop-text">Drag & drop your CSV file here</div>
+                <div class="drop-subtext">or click to browse</div>
+            </div>
+            <input type="file" id="fileInput" accept=".csv">
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Processing your VEP signal...</p>
+        </div>
+        
+        <div class="error" id="error"></div>
+        
+        <div class="results" id="results">
+            <div class="file-info" id="fileInfo"></div>
+            
+            <div class="prediction-card">
+                <div class="prediction-label">Predicted Class</div>
+                <div class="prediction-value" id="predictionClass">-</div>
+                <div class="prediction-label">Confidence</div>
+                <div style="font-size: 20px; font-weight: 600;" id="confidence">-</div>
+                <div class="confidence-bar">
+                    <div class="confidence-fill" id="confidenceFill" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <div class="metrics">
+                <div class="metric-box">
+                    <div class="metric-label">Signal-to-Noise Ratio</div>
+                    <div class="metric-value" id="snr">-</div>
+                </div>
+            </div>
+            
+            <div class="probabilities">
+                <div class="prob-title">Class Probabilities</div>
+                <div id="probabilitiesList"></div>
+            </div>
+            
+            <div class="plot-container">
+                <img id="signalPlot" src="" alt="VEP Signal">
+            </div>
+            
+            <button class="btn-reset" onclick="reset()">Analyze Another File</button>
+        </div>
+    </div>
+    
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const uploadSection = document.getElementById('uploadSection');
+        const loading = document.getElementById('loading');
+        const results = document.getElementById('results');
+        const error = document.getElementById('error');
+        
+        // Click to upload
+        dropZone.addEventListener('click', () => fileInput.click());
+        
+        // Drag and drop events
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+        
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-over');
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        async function handleFile(file) {
+            // Validate file type
+            if (!file.name.endsWith('.csv')) {
+                showError('Please upload a CSV file');
+                return;
+            }
+            
+            // Show loading
+            uploadSection.style.display = 'none';
+            loading.style.display = 'block';
+            results.style.display = 'none';
+            error.style.display = 'none';
+            
+            // Create form data
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayResults(data, file.name);
+                } else {
+                    showError(data.error || 'An error occurred during prediction');
+                }
+            } catch (err) {
+                showError('Network error: ' + err.message);
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+        
+        function displayResults(data, filename) {
+            // File info
+            document.getElementById('fileInfo').innerHTML = 
+                `<strong>File:</strong> ${filename}`;
+            
+            // Prediction
+            document.getElementById('predictionClass').textContent = data.prediction;
+            document.getElementById('confidence').textContent = data.confidence;
+            
+            // Confidence bar
+            const confidencePercent = parseFloat(data.confidence);
+            document.getElementById('confidenceFill').style.width = confidencePercent + '%';
+            
+            // SNR
+            document.getElementById('snr').textContent = data.snr;
+            
+            // Probabilities
+            const probList = document.getElementById('probabilitiesList');
+            probList.innerHTML = '';
+            for (const [cls, prob] of Object.entries(data.probabilities)) {
+                probList.innerHTML += `
+                    <div class="prob-item">
+                        <span class="prob-label">${cls}</span>
+                        <span class="prob-value">${prob}</span>
+                    </div>
+                `;
+            }
+            
+            // Plot
+            document.getElementById('signalPlot').src = 'data:image/png;base64,' + data.plot;
+            
+            // Show results
+            results.style.display = 'block';
+        }
+        
+        function showError(message) {
+            error.textContent = '⚠️ ' + message;
+            error.style.display = 'block';
+            uploadSection.style.display = 'block';
+            setTimeout(() => {
+                error.style.display = 'none';
+            }, 5000);
+        }
+        
+        function reset() {
+            uploadSection.style.display = 'block';
+            results.style.display = 'none';
+            fileInput.value = '';
+        }
+    </script>
+</body>
+</html>

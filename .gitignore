@@ -1,0 +1,74 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+.virtualenv/
+
+# IDE & Editors
+.vscode/
+.idea/
+.cursor/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Project Data & Results
+data/Labelled_VEP_Data/
+data/Preprocessed_VEP_Data/
+outputs/results/
+results_old/
+tmax_results/
+model_comparison_results/
+hyperparam_results/
+
+# Legacy/Archive
+old_code/
+MATLAB_prep/
+app/uploads/
+
+# Model files (if large)
+*.h5
+*.pth
+*.ckpt
+*.pb
+
+# Logs
+*.log
+logs/
+
+hyperparameter_search_LODO.py

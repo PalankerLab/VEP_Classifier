@@ -1,0 +1,20 @@
+# Core scientific stack
+numpy
+pandas
+scipy
+scikit-learn
+matplotlib
+seaborn
+
+# Deep learning
+tensorflow
+
+# Signal processing
+PyWavelets
+
+# Notebooks / progress bars
+tqdm
+
+# Web app
+flask
+werkzeug
