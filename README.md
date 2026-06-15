@@ -1,6 +1,6 @@
 # VEP Classifier
 
-![DOI](https://zenodo.org/badge/latestdoi/{1144714879})
+[![DOI](https://zenodo.org/badge/1144714879.svg)](https://zenodo.org/badge/latestdoi/1144714879)
 
 A machine-learning pipeline for classifying **visually evoked potentials (VEPs)** recorded from the visual cortex of 
 rats implanted with a retinal prosthesis. 
